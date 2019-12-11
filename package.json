@@ -2,9 +2,10 @@
   "name": "blogpostsapi-lambda",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "trap 'docker-compose down; exit 0' SIGINT; docker-compose up --build & nodemon -e 'yml js json' --exec 'sls offline start -s local --skipCacheInvalidation'",
+    "test": "npm run unit",
+    "unit": "mocha tests/unitTests"
   },
   "repository": {
     "type": "git",
