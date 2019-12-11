@@ -1,1 +1,9 @@
-[]
+[
+  {
+    "_id": { "$oid": "5df17af9d8d0bf182023fe36" },
+    "blogPostId": "test-post",
+    "title": "Test Post",
+    "previewText": "This article is a real doozy. I'm going to walk you through creating a RESTful Serverless AWS Lambda API running Node. We'll create an example API to handle blog posts, specifically...",
+    "body": "# Creating a Serverless API with Mongo, Docker, and Codeship  **Overview**  - Create a repo - [`npm init`](##-`npm-init`) - [Get Workspace ready](##-Get-Workspace-ready)   - Install the following:     - devDependencies       - `dredd`       - `eslint`       - `hooks`       - `mocha`       - `nodemon`       - `prettier`       - `serverless`       - `serverless-offline`     - dependencies       - `json-api-serializer`       - `ajv`       - `mongoose`       - `papaparse`       - `query-string`   - Add the following files     - `.gitignore`     - `.prettierrc`     - `.eslintrc`     - `.eslintignore`     - `.dockerignore` - [Write the API Blueprint/Docs](##-Write-the-API-Blueprint/Docs) - [Create `serverless` project](##-Create-serverless-project)   - `serverless.yml` - [Setup DB](##-Setup-DB)   - Remote (if necessary)   - Local - [Setup Tests](##-Setup-Tests)   - Endpoint   - Unit - [Error Handling](##-Error-Handling) - [Endpoints](##-Endpoints)   - Connect to the DB   - Tests     - Endpoint     - Unit   - Handle Requests and Return Data - [CI/CD with Codeship](##-CI/CD-with-Codeship)   - CI Test Environment Setup   - Deployment - (Optional) Connect to Slack   - Ops Channel   - github channel  This article is a real doozy. I'm going to walk you through creating a RESTful Serverless AWS Lambda API running Node. We'll create an example API to handle blog posts, specifically the following:  - `GET` all blog posts - `GET` specific posts by id - `POST` to create a new blog post - `PATCH` to edit a blog post - `DELETE` to delete a blog post  Let's get started."
+  }
+]
