@@ -6,9 +6,6 @@ const baseOptions = {
   jsonapiObject: false
 };
 
-Serializer.register('course', baseOptions);
-Serializer.register('groupTypeClass', baseOptions);
-Serializer.register('groupType', baseOptions);
-Serializer.register('group', baseOptions);
+Serializer.register('blogPost', baseOptions);
 
 module.exports.Serializer = Serializer;
