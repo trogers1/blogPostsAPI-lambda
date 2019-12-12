@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
+    "deploy:prod": "export AWS_ACCESS_KEY_ID=$LAMBDA_AWS_ACCESS_KEY_ID; export AWS_SECRET_ACCESS_KEY=$LAMBDA_AWS_SECRET_ACCESS_KEY; sls deploy --force;",
     "start": "trap 'docker-compose down; exit 0' SIGINT; docker-compose up --build & nodemon -e 'yml js json' --exec 'sls offline start -s local --skipCacheInvalidation'",
     "test": "npm run unit",
     "unit": "mocha tests/unitTests"
