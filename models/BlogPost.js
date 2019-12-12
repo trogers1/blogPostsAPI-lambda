@@ -3,9 +3,11 @@ const mongoose = require('mongoose');
 const blogPostSchema = new mongoose.Schema(
   {
     blogPostId: { type: String, index: true },
-    title: { type: String },
+    body: { type: String, select: false },
     previewText: { type: String },
-    body: { type: String, select: false }
+    tags: { type: [String], index: true },
+    title: { type: String, index: true },
+    type: { type: String, index: true }
   },
   {
     collection: 'blogPosts',
