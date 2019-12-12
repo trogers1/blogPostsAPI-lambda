@@ -9,7 +9,7 @@ module.exports.formatNotFoundError = error => {
   if (error.statusCode && error.headers && error.body && JSON.parse(error.body).errors) {
     return error;
   }
-  console.error(`Unable to find the resource: ${error}.`);
+  console.error(error);
   return {
     statusCode: 404,
     headers: {

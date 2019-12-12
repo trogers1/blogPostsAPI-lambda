@@ -9,7 +9,7 @@ module.exports.formatBadRequestError = error => {
   if (error.statusCode && error.headers && error.body && JSON.parse(error.body).errors) {
     return error;
   }
-  console.error(`Your request was malformed: ${error}.`);
+  console.error(error);
   return {
     statusCode: 400,
     headers: {
