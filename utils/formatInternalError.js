@@ -9,7 +9,7 @@ module.exports.formatInternalError = error => {
   if (error.statusCode && error.headers && error.body && JSON.parse(error.body).errors) {
     return error;
   }
-  console.error(error.message);
+  console.error(error);
   return {
     statusCode: 500,
     headers: {
