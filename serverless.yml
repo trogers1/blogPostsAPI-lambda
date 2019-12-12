@@ -3,7 +3,7 @@ service: sls-blog-posts-api-lambda
 provider:
   environment:
     ENV: ${opt:stage, 'local'}
-    DB_URL: ${env:${opt:stage, 'QA'}_DB_URL}
+    DB_URL: ${env:DB_URL}
   name: aws
   runtime: nodejs10.x
   region: us-west-2
