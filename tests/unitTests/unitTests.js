@@ -4,8 +4,11 @@ const {
   formatDatabaseError,
   formatInternalError,
   formatNotFoundError,
-  formatBadRequestError
+  formatBadRequestError,
+  parseBlogPost
 } = require('../../utils');
+const { slugify } = require('../../helpers/slugify');
+const { truncate } = require('../../helpers/truncate');
 
 describe('utils:', () => {
   describe('- formatDatabaseError()', () => {
@@ -135,6 +138,98 @@ describe('utils:', () => {
         assert.deepStrictEqual(
           formatBadRequestError(formatNotFoundError(error)),
           formatNotFoundError(error)
+        );
+      });
+    });
+  });
+});
+
+describe('helpers:', () => {
+  describe('- slugify()', () => {
+    describe('-> Provided A Normal Sentence, No Special Characters', () => {
+      it('should return a properly-slugified string', () => {
+        assert.strictEqual(slugify('This is a string.'), 'this-is-a-string');
+      });
+    });
+    describe('-> Provided A Normal Sentence, With Special Characters', () => {
+      it('should return a properly-slugified string', () => {
+        assert.strictEqual(
+          slugify('Mr. `Gorbachev`, tear down $%^thI$$s wall!'),
+          'mr-gorbachev-tear-down-this-wall'
+        );
+      });
+    });
+    describe('-> Provided A Weird String With Special Characters', () => {
+      it('should return a properly-slugified string', () => {
+        assert.strictEqual(
+          slugify('## wh(*))-at d*&#_)i(*D )O((*U Y00OU s12312;a31230y?'),
+          'wh-at-d_id-ou-y00ou-s12312a31230y'
+        );
+      });
+    });
+  });
+
+  describe('- truncate()', () => {
+    describe('-> Provided A Normal Sentence, No Special Characters, Max Char Is Between Words', () => {
+      it('should return a properly-truncated string', () => {
+        assert.strictEqual(truncate('This is a string.', 10), 'This is a…');
+      });
+    });
+    describe('-> Provided A Normal Sentence, With Special Characters, Max Char Is Between Words', () => {
+      it('should return a properly-truncated string', () => {
+        assert.strictEqual(
+          truncate(
+            '“History will be kind *(_)#to me for I intend to write it.” - Winston S. Churchill',
+            58
+          ),
+          '“History will be kind *(_)#to me for I intend to write it…'
+        );
+      });
+    });
+    describe('-> Provided A Normal Sentence, With Special Characters, Max Char Is In A Word', () => {
+      it('should return a properly-truncated string', () => {
+        assert.strictEqual(
+          truncate(
+            '“History will be kind *(_)#to me for I intend to write it.” - Winston S. Churchill',
+            70
+          ),
+          '“History will be kind *(_)#to me for I intend to write it.” - Winston…'
+        );
+      });
+    });
+    describe('-> Provided a string of only newlines', () => {
+      it('should return an empty string', () => {
+        assert.strictEqual(truncate('\n\n\n\n', 20), '');
+      });
+    });
+    describe('-> Provided A Normal Sentence, With Special Characters, Max Char Is Longer Than The String', () => {
+      it('should return the string, unmolested', () => {
+        assert.strictEqual(
+          truncate(
+            'The most effective way to destroy peo(&&__+_ple is to deny and obliterate their o)))*&&_-_wn understanding of their history.” ― George Orwell',
+            250
+          ),
+          'The most effective way to destroy peo(&&__+_ple is to deny and obliterate their o)))*&&_-_wn understanding of their history.” ― George Orwell'
+        );
+      });
+    });
+    describe('-> Provided A Normal Sentence, With Newline Characters, Max Char Is In A Word', () => {
+      it('should return a properly-truncated string, with newlines replaced by spaces', () => {
+        assert.strictEqual(
+          truncate('“The first duty of a man is to think for himself”\n― Jose Marti\n', 60),
+          '“The first duty of a man is to think for himself” ― Jose…'
+        );
+      });
+    });
+
+    describe('-> Provided A Normal Sentence, With Newline Characters, Max Char Is Longer Than The String', () => {
+      it('should return the string, unmolested, with newlines replaced by spaces, except at the end of the string', () => {
+        assert.strictEqual(
+          truncate(
+            '“Remember, remember always, that all of us, and you and I especially, are descended from immigrants and revolutionists.”\n― Franklin D. Roosevelt\n',
+            600
+          ),
+          '“Remember, remember always, that all of us, and you and I especially, are descended from immigrants and revolutionists.” ― Franklin D. Roosevelt'
         );
       });
     });

@@ -5,11 +5,13 @@
  * @returns {string} the slugified version of the string
  */
 module.exports.slugify = string => {
+  string = string.trim();
   if (!string) {
     return string;
   }
-  let newString = string.replace(/\s/g, '-');
-  newString = newString.replace(/[^\w-]/g, '');
+  let newString = string.replace(/[^\w\s-]/g, '');
+  newString = newString.trim();
+  newString = newString.replace(/\s/g, '-');
   newString = newString.toLowerCase();
   return newString;
 };

@@ -6,7 +6,8 @@
  * @returns {string} the truncated version of the string
  */
 module.exports.truncate = (string, maxChars) => {
-  string = string.replace(/\n/g, '');
+  string = string.replace(/\n/g, ' ');
+  string = string.trim();
   if (!string) {
     return string;
   }
