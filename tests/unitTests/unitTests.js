@@ -142,6 +142,263 @@ describe('utils:', () => {
       });
     });
   });
+
+  describe('- parseBlogPost()', () => {
+    describe('-> Provided An Average MD, it should return the appropriate metadata and prepend a Table of Contents', () => {
+      let exampleBody =
+        '\r\n' +
+        'Content-Disposition: form-data; name=""; filename="Steps.md"\r\n' +
+        'Content-Type: text/markdown\r\n' +
+        '\r\n' +
+        '# Creating a Serverless API with Mongo, Docker, and Codeship\n' +
+        '\n' +
+        "This article is a real doozy. I'm going to walk you through creating a RESTful Serverless AWS Lambda API running Node. We'll create an example API to handle blog posts, specifically the following:\n" +
+        '\n' +
+        '- `GET` all blog posts\n' +
+        '- `GET` specific posts by id\n' +
+        '- `POST` to create a new blog post\n' +
+        '- `PATCH` to edit a blog post\n' +
+        '- `DELETE` to delete a blog post\n' +
+        '\n' +
+        "Create a repo using your version control software and let's get started.\n" +
+        '\n' +
+        '## `npm init`\n' +
+        '\n' +
+        'Using `npm init`, answer the questions. After generating the `package.json`, edit it by removing the `"main"` line, since we won\'t have a main entrance to our API.\n' +
+        '\n' +
+        '## Get Workspace ready\n' +
+        '\n' +
+        '### Install Dependencies\n' +
+        '\n' +
+        "Firstly, we'll install all dependencies. Both devDependencies and full dependencies.\n" +
+        '\n' +
+        '**devDependencies**\n' +
+        '\n' +
+        '```\n' +
+        '$ npm i dredd eslint hooks mocha nodemon prettier serverless serverless-offline --save-dev\n' +
+        '```\n' +
+        '\n' +
+        '**dependencies**\n' +
+        '\n' +
+        '```\n' +
+        '$ npm i json-api-serializer ajv mongoose papaparse query-string\n' +
+        '```\n' +
+        '\n' +
+        '### Create Dot Files\n' +
+        '\n' +
+        'Now, we need the dot files to get our workspace working correctly. Create the following files (examples can be found in the `examples/dotFiles`[LINK_NEEDED] directory).\n' +
+        '\n';
+      let expectedResultBody =
+        '\n' +
+        "This article is a real doozy. I'm going to walk you through creating a RESTful Serverless AWS Lambda API running Node. We'll create an example API to handle blog posts, specifically the following:\n" +
+        '\n' +
+        '- `GET` all blog posts\n' +
+        '- `GET` specific posts by id\n' +
+        '- `POST` to create a new blog post\n' +
+        '- `PATCH` to edit a blog post\n' +
+        '- `DELETE` to delete a blog post\n' +
+        '\n' +
+        "Create a repo using your version control software and let's get started.\n" +
+        '\n' +
+        '## `npm init`\n' +
+        '\n' +
+        'Using `npm init`, answer the questions. After generating the `package.json`, edit it by removing the `"main"` line, since we won\'t have a main entrance to our API.\n' +
+        '\n' +
+        '## Get Workspace ready\n' +
+        '\n' +
+        '### Install Dependencies\n' +
+        '\n' +
+        "Firstly, we'll install all dependencies. Both devDependencies and full dependencies.\n" +
+        '\n' +
+        '**devDependencies**\n' +
+        '\n' +
+        '```\n' +
+        '$ npm i dredd eslint hooks mocha nodemon prettier serverless serverless-offline --save-dev\n' +
+        '```\n' +
+        '\n' +
+        '**dependencies**\n' +
+        '\n' +
+        '```\n' +
+        '$ npm i json-api-serializer ajv mongoose papaparse query-string\n' +
+        '```\n' +
+        '\n' +
+        '### Create Dot Files\n' +
+        '\n' +
+        'Now, we need the dot files to get our workspace working correctly. Create the following files (examples can be found in the `examples/dotFiles`[LINK_NEEDED] directory).\n' +
+        '\n';
+      let result = parseBlogPost(exampleBody);
+      it('should contain the correct metadata: Title', () => {
+        assert.strictEqual(
+          result.title,
+          'Creating a Serverless API with Mongo, Docker, and Codeship'
+        );
+      });
+      it('should contain the correct metadata: blogPostId', () => {
+        assert.strictEqual(
+          result.blogPostId,
+          'creating-a-serverless-api-with-mongo-docker-and-codeship'
+        );
+      });
+      it('should contain the correct metadata: previewText', () => {
+        assert.strictEqual(
+          result.previewText,
+          "This article is a real doozy. I'm going to walk you through creating a RESTful Serverless AWS…"
+        );
+      });
+      it('should contain the correct body, including the table of contents', () => {
+        let correctTableOfContents =
+          '## Contents\n- [`npm init`](##npm-init)\n- [Get Workspace ready](##get-workspace-ready)\n  - [Install Dependencies](###install-dependencies)\n  - [Create Dot Files](###create-dot-files)\n\n----\n\n';
+        assert.strictEqual(result.body, correctTableOfContents + expectedResultBody);
+      });
+    });
+    describe('-> Provided An MD with duplicate headers', () => {
+      let exampleBody =
+        '\r\n' +
+        'Content-Disposition: form-data; name=""; filename="Steps.md"\r\n' +
+        'Content-Type: text/markdown\r\n' +
+        '\r\n' +
+        '# Creating a Serverless API with Mongo, Docker, and Codeship\n' +
+        '\n' +
+        "This article is a real doozy. I'm going to walk you through creating a RESTful Serverless AWS Lambda API running Node. We'll create an example API to handle blog posts, specifically the following:\n" +
+        '\n' +
+        '- `GET` all blog posts\n' +
+        '- `GET` specific posts by id\n' +
+        '- `POST` to create a new blog post\n' +
+        '- `PATCH` to edit a blog post\n' +
+        '- `DELETE` to delete a blog post\n' +
+        '\n' +
+        "Create a repo using your version control software and let's get started.\n" +
+        '\n' +
+        '## `npm init`\n' +
+        '\n' +
+        '## `npm init`\n' +
+        '\n' +
+        'Using `npm init`, answer the questions. After generating the `package.json`, edit it by removing the `"main"` line, since we won\'t have a main entrance to our API.\n' +
+        '\n' +
+        '## Get Workspace ready\n' +
+        '\n' +
+        '### Install Dependencies\n' +
+        '\n';
+      let result = parseBlogPost(exampleBody);
+      it('should correctly return an error when encountering duplicate headers', () => {
+        assert.strictEqual(result.error, 'Found two matching headers. Lines: 12 and 14');
+      });
+    });
+    describe('-> Provided An MD without an h1 header', () => {
+      let exampleBody =
+        '\r\n' +
+        'Content-Disposition: form-data; name=""; filename="Steps.md"\r\n' +
+        'Content-Type: text/markdown\r\n' +
+        '\r\n' +
+        '\n' +
+        "This article is a real doozy. I'm going to walk you through creating a RESTful Serverless AWS Lambda API running Node. We'll create an example API to handle blog posts, specifically the following:\n" +
+        '\n' +
+        '- `GET` all blog posts\n' +
+        '- `GET` specific posts by id\n' +
+        '- `POST` to create a new blog post\n' +
+        '- `PATCH` to edit a blog post\n' +
+        '- `DELETE` to delete a blog post\n' +
+        '\n' +
+        "Create a repo using your version control software and let's get started.\n" +
+        '\n' +
+        '## `npm init`\n' +
+        '\n' +
+        'Using `npm init`, answer the questions. After generating the `package.json`, edit it by removing the `"main"` line, since we won\'t have a main entrance to our API.\n' +
+        '\n' +
+        '## Get Workspace ready\n' +
+        '\n' +
+        '### Install Dependencies\n' +
+        '\n';
+      let result = parseBlogPost(exampleBody);
+      it('should correctly return an error', () => {
+        assert.strictEqual(result.error, 'Found no h1 headers');
+      });
+    });
+    describe('-> Provided An MD more than one h1 header', () => {
+      let exampleBody =
+        '\r\n' +
+        'Content-Disposition: form-data; name=""; filename="Steps.md"\r\n' +
+        'Content-Type: text/markdown\r\n' +
+        '\r\n' +
+        '# Creating a Serverless API with Mongo, Docker, and Codeship\n' +
+        '\n' +
+        "This article is a real doozy. I'm going to walk you through creating a RESTful Serverless AWS Lambda API running Node. We'll create an example API to handle blog posts, specifically the following:\n" +
+        '\n' +
+        '- `GET` all blog posts\n' +
+        '- `GET` specific posts by id\n' +
+        '- `POST` to create a new blog post\n' +
+        '- `PATCH` to edit a blog post\n' +
+        '- `DELETE` to delete a blog post\n' +
+        '\n' +
+        "Create a repo using your version control software and let's get started.\n" +
+        '\n' +
+        '## `npm init`\n' +
+        '\n' +
+        'Using `npm init`, answer the questions. After generating the `package.json`, edit it by removing the `"main"` line, since we won\'t have a main entrance to our API.\n' +
+        '\n' +
+        '## Get Workspace ready\n' +
+        '\n' +
+        '# Install Dependencies\n' +
+        '\n';
+      console.log('start here');
+      let result = parseBlogPost(exampleBody);
+      it('should correctly return an error', () => {
+        assert.strictEqual(result.error, 'More than one h1 header found on lines 0, 18');
+      });
+    });
+    describe('-> Provided A normal MD, but asked not to produce a Table of Contents, the body should be returned unmolested ', () => {
+      let exampleBody =
+        '\r\n' +
+        'Content-Disposition: form-data; name=""; filename="Steps.md"\r\n' +
+        'Content-Type: text/markdown\r\n' +
+        '\r\n' +
+        '# Creating a Serverless API with Mongo, Docker, and Codeship\n' +
+        '\n' +
+        "This article is a real doozy. I'm going to walk you through creating a RESTful Serverless AWS Lambda API running Node. We'll create an example API to handle blog posts, specifically the following:\n" +
+        '\n' +
+        '- `GET` all blog posts\n' +
+        '- `GET` specific posts by id\n' +
+        '- `POST` to create a new blog post\n' +
+        '- `PATCH` to edit a blog post\n' +
+        '- `DELETE` to delete a blog post\n' +
+        '\n' +
+        "Create a repo using your version control software and let's get started.\n" +
+        '\n' +
+        '## `npm init`\n' +
+        '\n' +
+        'Using `npm init`, answer the questions. After generating the `package.json`, edit it by removing the `"main"` line, since we won\'t have a main entrance to our API.\n' +
+        '\n' +
+        '## Get Workspace ready\n' +
+        '\n' +
+        '### Install Dependencies\n' +
+        '\n';
+      let expectedResultBody =
+        '\n' +
+        '\n' +
+        "This article is a real doozy. I'm going to walk you through creating a RESTful Serverless AWS Lambda API running Node. We'll create an example API to handle blog posts, specifically the following:\n" +
+        '\n' +
+        '- `GET` all blog posts\n' +
+        '- `GET` specific posts by id\n' +
+        '- `POST` to create a new blog post\n' +
+        '- `PATCH` to edit a blog post\n' +
+        '- `DELETE` to delete a blog post\n' +
+        '\n' +
+        "Create a repo using your version control software and let's get started.\n" +
+        '\n' +
+        '## `npm init`\n' +
+        '\n' +
+        'Using `npm init`, answer the questions. After generating the `package.json`, edit it by removing the `"main"` line, since we won\'t have a main entrance to our API.\n' +
+        '\n' +
+        '## Get Workspace ready\n' +
+        '\n' +
+        '### Install Dependencies\n' +
+        '\n';
+      let result = parseBlogPost(exampleBody, false);
+      it('should return the body as expected', () => {
+        assert.strictEqual(result.body, expectedResultBody);
+      });
+    });
+  });
 });
 
 describe('helpers:', () => {
