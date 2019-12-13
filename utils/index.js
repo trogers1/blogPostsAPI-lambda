@@ -5,6 +5,7 @@ const { formatNotFoundError } = require('./formatNotFoundError');
 const { formatBadRequestError } = require('./formatBadRequestError');
 const { formatValidationError } = require('./formatValidationError');
 const { parseBlogPost } = require('./parseBlogPost');
+const { parseBody } = require('./parseBody');
 
 module.exports = {
   connectToDatabase,
@@ -13,5 +14,6 @@ module.exports = {
   formatInternalError,
   formatNotFoundError,
   formatValidationError,
-  parseBlogPost
+  parseBlogPost,
+  parseBody
 };
