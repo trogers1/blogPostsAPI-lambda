@@ -3,7 +3,7 @@
 const { truncate } = require('../helpers/truncate');
 const { slugify } = require('../helpers/slugify');
 
-module.exports.parseBlogPost = body => {
+module.exports.parseBlogPost = (body, shouldCreateContents = true) => {
   let title, blogPostId, previewText;
   body = body.split('\r\n').filter(item => item.length);
   body = body[2];
@@ -17,12 +17,9 @@ module.exports.parseBlogPost = body => {
     bodyWithoutHeader;
   for (let i = 0; i < parseBody.length; i++) {
     line = parseBody[i];
-    let match = line.match(/^# \w+/);
+    let match = line.match(/^# (.+)/);
     if (match) {
       h1.push({ match, lineNum: i });
-    }
-    if (line.match(/^## Contents$/)) {
-      contents = i;
     }
     match = line.match(/(^#+) (.+)/);
     if (match) {
@@ -30,7 +27,7 @@ module.exports.parseBlogPost = body => {
       headers.push(match);
     }
   }
-  if (!h1) {
+  if (!h1.length) {
     return { error: 'Found no h1 headers' };
   } else if (h1.length > 1) {
     return {
@@ -45,7 +42,7 @@ module.exports.parseBlogPost = body => {
     previewText = truncate(bodyWithoutHeader, 100);
   }
 
-  if (!contents) {
+  if (shouldCreateContents) {
     contents = '## Contents\n';
     headers.shift(); // remove h1
     while (headers.length) {
@@ -60,10 +57,11 @@ module.exports.parseBlogPost = body => {
       }
       contents += `${'  '.repeat(level)}`;
       contents += `- [${text}](${'#'.repeat(header[1].length)}${slugify(text)})\n`;
-      headers.shift();
     }
     contents += '\n----\n';
     body = contents + bodyWithoutHeader;
+  } else {
+    body = bodyWithoutHeader;
   }
 
   return { title, blogPostId, previewText, body };
