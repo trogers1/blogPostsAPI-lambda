@@ -39,7 +39,11 @@ module.exports.parseBlogPost = (body, shouldCreateContents = true) => {
     blogPostId = blogPostId.replace(/[^\w-]/g, '');
     blogPostId = blogPostId.toLowerCase();
     bodyWithoutHeader = body.slice(h1[0].match.input.length);
-    previewText = truncate(bodyWithoutHeader, 100);
+
+    // Remove links and such to get the preview text, then truncate.
+    previewText = bodyWithoutHeader.replace(/\]\(.*?\)/g, '');
+    previewText = previewText.replace(/[^\w\n -.;!,'"]/g, '');
+    previewText = truncate(previewText, 100);
   }
 
   if (shouldCreateContents) {
