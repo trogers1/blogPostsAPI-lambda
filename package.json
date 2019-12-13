@@ -1,0 +1,39 @@
+{
+  "name": "blogpostsapi-lambda",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "deploy:prod": "export AWS_ACCESS_KEY_ID=$LAMBDA_AWS_ACCESS_KEY_ID; export AWS_SECRET_ACCESS_KEY=$LAMBDA_AWS_SECRET_ACCESS_KEY; sls deploy -s PROD --force;",
+    "deploy:qa": "export AWS_ACCESS_KEY_ID=$LAMBDA_AWS_ACCESS_KEY_ID; export AWS_SECRET_ACCESS_KEY=$LAMBDA_AWS_SECRET_ACCESS_KEY; sls deploy -s QA --force;",
+    "start": "trap 'docker-compose down; exit 0' SIGINT; docker-compose up --build & nodemon -e 'yml js json' --exec 'sls offline start -s local --skipCacheInvalidation'",
+    "test": "npm run unit",
+    "unit": "mocha tests/unitTests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/trogers1/blogPostsAPI-lambda.git"
+  },
+  "author": "Taylor Rogers",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/trogers1/blogPostsAPI-lambda/issues"
+  },
+  "homepage": "https://github.com/trogers1/blogPostsAPI-lambda#readme",
+  "devDependencies": {
+    "dredd": "^12.1.0",
+    "eslint": "^6.7.1",
+    "hooks": "^0.3.2",
+    "mocha": "^6.2.2",
+    "nodemon": "^2.0.1",
+    "prettier": "^1.19.1",
+    "serverless": "^1.58.0",
+    "serverless-offline": "^5.12.0"
+  },
+  "dependencies": {
+    "ajv": "^6.10.2",
+    "json-api-serializer": "^2.2.2",
+    "mongoose": "^5.7.12",
+    "papaparse": "^5.1.0",
+    "query-string": "^6.9.0"
+  }
+}

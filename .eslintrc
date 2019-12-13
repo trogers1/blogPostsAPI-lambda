@@ -1,0 +1,151 @@
+{
+  "rules": {
+    "comma-dangle": 2,
+    "eol-last": 1,
+    "no-cond-assign": 2,
+    "no-console": 1,
+    "no-control-regex": 2,
+    "no-debugger": 2,
+    "no-dupe-args": 2,
+    "no-dupe-keys": 2,
+    "no-duplicate-case": 2,
+    "no-empty": 2,
+    "no-empty-character-class": 2,
+    "no-ex-assign": 2,
+    "no-extra-boolean-cast": 2,
+    "no-extra-parens": 0,
+    "no-extra-semi": 2,
+    "no-func-assign": 2,
+    "no-inner-declarations": 2,
+    "no-invalid-regexp": 2,
+    "no-irregular-whitespace": 2,
+    "no-negated-in-lhs": 2,
+    "no-obj-calls": 2,
+    "no-regex-spaces": 2,
+    "no-sparse-arrays": 2,
+    "no-unreachable": 2,
+    "use-isnan": 2,
+    "valid-typeof": 2,
+    "no-catch-shadow": 2,
+    "no-delete-var": 1,
+    "no-label-var": 2,
+    "no-shadow": 2,
+    "no-shadow-restricted-names": 2,
+    "no-trailing-spaces": 1,
+    "no-undef": 2,
+    "no-undef-init": 2,
+    "no-unused-vars": [
+      1,
+      {
+        "ignoreRestSiblings": true
+      }
+    ],
+    "no-use-before-define": 1,
+    "brace-style": 1,
+    "comma-spacing": [1, { "before": false, "after": true }],
+    "comma-style": [1, "last"],
+    "dot-notation": "error",
+    "indent": "off",
+    "key-spacing": [1, { "beforeColon": false, "afterColon": true }],
+    "no-lonely-if": 1,
+    "no-mixed-spaces-and-tabs": 1,
+    "no-nested-ternary": "error",
+    "no-unneeded-ternary": 2,
+    "no-underscore-dangle": 1,
+    "quote-props": [1, "as-needed"],
+    "quotes": "off",
+    "keyword-spacing": 1,
+    "space-before-blocks": [1, "always"],
+    "space-before-function-paren": [1, { "anonymous": "never", "named": "never" }],
+    "object-shorthand": "error",
+    "object-curly-spacing": [1, "always"],
+    "space-in-parens": [1, "never"],
+    "space-infix-ops": 1,
+    "space-unary-ops": [1, { "words": true, "nonwords": false }],
+    "spaced-comment": [1, "always"],
+    "semi": [2, "always"],
+    "curly": "error",
+    "no-var": 2,
+    "generator-star-spacing": ["error", { "before": false, "after": true }],
+    "prefer-destructuring": [
+      "error",
+      {
+        "array": false,
+        "object": true
+      },
+      {
+        "enforceForRenamedProperties": false
+      }
+    ],
+    "prefer-template": 2,
+    "prefer-spread": 2,
+    "prefer-arrow-callback": 2,
+    "arrow-spacing": 2,
+    "arrow-parens": [2, "as-needed"],
+    "react/default-props-match-prop-types": [0, { "allowRequiredDefaults": false }],
+    "react/jsx-handler-names": 0,
+    "react/forbid-prop-types": 0,
+    "react/jsx-no-bind": [
+      0,
+      {
+        "ignoreRefs": true,
+        "allowArrowFunctions": false,
+        "allowBind": false
+      }
+    ],
+    "react/require-render-return": 2,
+    "react/jsx-pascal-case": 2,
+    "react/jsx-curly-spacing": [1, "never"],
+    "react/jsx-key": 2,
+    "react/jsx-boolean-value": 1,
+    "react/jsx-no-undef": 2,
+    "react/jsx-no-duplicate-props": 1,
+    "react/jsx-no-literals": 0,
+    "react/sort-prop-types": 0,
+    "react/jsx-sort-props": 0,
+    "react/jsx-indent-props": [0, 4],
+    "react/jsx-uses-react": 2,
+    "react/jsx-uses-vars": 2,
+    "react/require-default-props": 0,
+    "react/no-did-mount-set-state": 2,
+    "react/no-multi-comp": [1, { "ignoreStateless": true }],
+    "react/no-danger": 1,
+    "react/no-unknown-property": 2,
+    "react/no-unused-prop-types": 2,
+    "react/prefer-stateless-function": 1,
+    "react/no-unescaped-entities": 2,
+    "react/no-direct-mutation-state": 2,
+    "react/prop-types": [
+      2,
+      {
+        "skipUndeclared": true
+      }
+    ],
+    "react/react-in-jsx-scope": 2,
+    "react/self-closing-comp": 2,
+    "react/sort-comp": 2,
+    "react/jsx-wrap-multilines": 2
+  },
+  "env": {
+    "es6": true,
+    "node": true,
+    "browser": true,
+    "mocha": true
+  },
+  "globals": {
+    "Raven": true,
+    "jest": true,
+    "expect": true,
+    "cy": true
+  },
+  "parser": "babel-eslint",
+  "parserOptions": {
+    "ecmaVersion": 2018,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "experimentalObjectRestSpread ": true,
+      "jsx": true
+    }
+  },
+  "plugins": ["react"]
+}
