@@ -78,15 +78,23 @@ module.exports.get = async event => {
 };
 
 module.exports.post = async event => {
-  let tags, type, badQueryParams;
+  let tags,
+    type,
+    createContents = true,
+    badQueryParams;
   try {
     if (event.queryStringParameters) {
-      ({ tags, type, ...badQueryParams } = event.queryStringParameters);
+      ({ tags, type, createContents, ...badQueryParams } = event.queryStringParameters);
       if (Object.keys(badQueryParams).length) {
         return formatBadRequestError({
           message: `Unrecognized query string parameter(s): ${Object.keys(badQueryParams).join(
             ', '
           )}`
+        });
+      }
+      if (createContents && createContents !== 'false') {
+        return formatBadRequestError({
+          message: "'createContents', if present, can only be equal to 'false'"
         });
       }
     }
@@ -122,7 +130,10 @@ module.exports.post = async event => {
         });
       }
 
-      const { title, blogPostId, previewText, body, error } = parseBlogPost(eventBody[0]);
+      const { title, blogPostId, previewText, body, error } = parseBlogPost(
+        eventBody[0],
+        createContents
+      );
 
       if (!title || !blogPostId || !previewText) {
         return formatInternalError({
