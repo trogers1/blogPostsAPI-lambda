@@ -204,6 +204,12 @@ module.exports.patch = async event => {
    *  - no h1
    *  - duplicate headers
    * - test uploading multiple files fails appropriately
+   * - test the links are updated correctly
+   *  - single link
+   *  - multiple link
+   *  - not all updated
+   *  - no links
+   *  - Check that all updated ones are in the header
    */
   let tags,
     type,
@@ -327,6 +333,36 @@ module.exports.patch = async event => {
     }
     console.log('blogPostId', blogPostId);
     console.log('id', id);
+
+    // If blogPostId is being updated, find BlogPosts that contain a link to blogPostId, and update the link
+    let connectedBlogPosts;
+    if (updatedFields.blogPostId) {
+      connectedBlogPosts = await BlogPost.find({
+        body: { $regex: new RegExp(`${id}(\\/)?\\)`) }
+      }).select('+body');
+      for (let post of connectedBlogPosts) {
+        let updatedConnectedPostBody = post.body.replace(
+          new RegExp(`${id}(\\/)?\\)`, 'g'),
+          `${blogPostId}/)`
+        );
+        await BlogPost.findOneAndUpdate(
+          { blogPostId: post.blogPostId },
+          { body: updatedConnectedPostBody }
+        );
+      }
+      let connectedBlogPosts2 = await BlogPost.find({
+        body: { $regex: new RegExp(`${id}(\\/)?\\)`) }
+      }).select('+body');
+      if (connectedBlogPosts2.length) {
+        const message = `Could not update all Connected Blog Posts. Updated: ${connectedBlogPosts
+          .filter(post => !connectedBlogPosts2.some(item => item.blogPostId === post.blogPostId))
+          .map(post => post.blogPostId)
+          .join(', ')}. Not updated: ${connectedBlogPosts2
+          .map(post => post.blogPostId)
+          .join(', ')}. `;
+        return formatInternalError({ message });
+      }
+    }
     // Validation complete. Update the record in the DB. The { new: true } tells mongoose to return
     // the record after the update has occurred. By default, findOneAndUpdate() returns the record
     // as it was before the update as it originally found it.
@@ -337,7 +373,8 @@ module.exports.patch = async event => {
     return {
       statusCode: 200,
       headers: {
-        'Content-Type': 'application/vnd.api+json; charset=utf-8'
+        'Content-Type': 'application/vnd.api+json; charset=utf-8',
+        'Updated-Posts': `${connectedBlogPosts.map(post => post.blogPostId).join(',')}`
       },
       body: JSON.stringify(serializedResponse)
     };
@@ -374,7 +411,6 @@ module.exports.delete = async event => {
         body: { $regex: new RegExp(`${blogPostId}(\\/)?\\)`) }
       });
       if (connectedBlogPosts.length) {
-        console.log('connected', connectedBlogPosts);
         return formatBadRequestError({
           message: `Cannot delete. Found the following connected Blog Posts: ${connectedBlogPosts
             .map(item => `'${item.blogPostId}'`)
