@@ -345,3 +345,59 @@ module.exports.patch = async event => {
     return formatInternalError(error);
   }
 };
+
+/**
+ * The DELETE method for the blogPost collection. This method expects a blogPostId as a path
+ * parameter of the event. If the ID is valid, it will delete the corresponding BlogPost record
+ * in the database. However, it will find any other BlogPosts whose bodies contain a link to the
+ * given blogPostId. If any are found, it will abort the deletion and return the blogPostIds of the
+ * records that mention the BlogPost to be deleted.
+ */
+module.exports.delete = async event => {
+  try {
+    const { id: blogPostId } = event.pathParameters;
+    if (event.queryStringParameters) {
+      // Do not allow any queryString parameters
+      if (event.queryStringParameters) {
+        const message = `Query string parameters are not accepted at this resource. Query string parameters found: ${Object.keys(
+          event.queryStringParameters
+        ).join(', ')}`;
+        throw formatBadRequestError({ message });
+      }
+    }
+
+    await connectToDatabase();
+
+    try {
+      // Find BlogPosts that contain a link to blogPostId, and return an error if any are found...
+      let connectedBlogPosts = await BlogPost.find({
+        body: { $regex: new RegExp(`${blogPostId}(\\/)?\\)`) }
+      });
+      if (connectedBlogPosts.length) {
+        console.log('connected', connectedBlogPosts);
+        return formatBadRequestError({
+          message: `Cannot delete. Found the following connected Blog Posts: ${connectedBlogPosts
+            .map(item => `'${item.blogPostId}'`)
+            .join(', ')}`
+        });
+      }
+
+      const deletedCourse = await BlogPost.findOneAndDelete(blogPostId);
+      if (!deletedCourse) {
+        const message = 'The BlogPost you are trying to delete was not found. Please verify the id';
+        throw formatNotFoundError({ message });
+      }
+    } catch (error) {
+      throw formatDatabaseError(error);
+    }
+
+    return {
+      statusCode: 204,
+      headers: {
+        'Content-Type': 'application/vnd.api+json; charset=utf-8'
+      }
+    };
+  } catch (error) {
+    return formatInternalError(error);
+  }
+};
