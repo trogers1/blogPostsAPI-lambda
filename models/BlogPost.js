@@ -27,7 +27,7 @@ const blogPostSchema = new mongoose.Schema(
     type: { type: String, index: true }
   },
   {
-    collection: `blogPosts-`,
+    collection: `blogPosts-${collection}`,
     timestamps: true
   }
 );
