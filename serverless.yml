@@ -14,8 +14,12 @@ package:
     - config/**
     - handlers/**
     - helpers/**
-    - node_modules/**
     - models/**
+    - node_modules/**
+    - requestSchemas/**
+    - responseSchemas/**
+    - tests/**
+    - utils/**
     - static/**
   exclude:
     - ./**
