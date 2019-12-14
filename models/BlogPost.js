@@ -1,5 +1,22 @@
 const mongoose = require('mongoose');
 
+const { ENV } = process.env;
+
+let collection;
+switch (ENV) {
+  case 'ci':
+    collection = 'LOCAL';
+    break;
+  case 'QA':
+    collection = ENV;
+    break;
+  case 'PROD':
+    collection = ENV;
+    break;
+  default:
+    collection = 'LOCAL';
+}
+
 const blogPostSchema = new mongoose.Schema(
   {
     blogPostId: { type: String, index: true },
@@ -10,7 +27,7 @@ const blogPostSchema = new mongoose.Schema(
     type: { type: String, index: true }
   },
   {
-    collection: 'blogPosts',
+    collection: `blogPosts-`,
     timestamps: true
   }
 );
