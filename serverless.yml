@@ -1,0 +1,76 @@
+service: sls-blog-posts-api-lambda
+
+provider:
+  environment:
+    ENV: ${opt:stage, 'local'}
+    DB_URL: ${env:DB_URL, file(./env.yml):DB_URL}
+  name: aws
+  runtime: nodejs10.x
+  region: us-west-2
+  stage: ${opt:stage}
+
+package:
+  include:
+    - config/**
+    - handlers/**
+    - helpers/**
+    - models/**
+    - node_modules/**
+    - requestSchemas/**
+    - responseSchemas/**
+    - tests/**
+    - utils/**
+    - static/**
+  exclude:
+    - ./**
+
+functions:
+  docs:
+    handler: handlers/docs.get
+    events:
+      - http:
+          path: /blog/docs
+          method: get
+  getblogPosts:
+    handler: handlers/blog.get
+    events:
+      - http:
+          path: blog/
+          method: get
+  getSingleBlogPost:
+    handler: handlers/blog.get
+    events:
+      - http:
+          path: /blog/{id}
+          method: get
+  createBlogPost:
+    handler: handlers/blog.post
+    events:
+      - http:
+          path: /blog
+          method: post
+  updateBlogPost:
+    handler: handlers/blog.patch
+    events:
+      - http:
+          path: /blog/{id}
+          method: patch
+  deleteBlogPost:
+    handler: handlers/blog.delete
+    events:
+      - http:
+          path: /blog/{id}
+          method: delete
+  badRequest:
+    handler: handlers/badRequest.main
+    events:
+      - http:
+          path: /blog/{id}/{all+}
+          method: any
+
+plugins:
+  - serverless-offline
+
+custom:
+  serverless-offline:
+    port: 4000

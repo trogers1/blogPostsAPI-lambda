@@ -1,0 +1,57 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "blogPostPatchSchema",
+  "type": "object",
+  "required": ["data"],
+  "additionalProperties": false,
+  "properties": {
+    "data": {
+      "$id": "#/properties/data",
+      "type": "object",
+      "required": ["type", "id", "attributes"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "$id": "#/properties/data/properties/type",
+          "type": "string",
+          "pattern": "^blogPost$"
+        },
+        "id": {
+          "$id": "#/properties/data/properties/id",
+          "type": "string",
+          "pattern": "^(.+)$"
+        },
+        "attributes": {
+          "$id": "#/properties/data/properties/attributes",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "previewText": {
+              "$id": "#/properties/data/properties/attributes/properties/previewText",
+              "type": "string",
+              "pattern": "^(.+)$"
+            },
+            "tags": {
+              "$id": "#/properties/data/properties/attributes/properties/tags",
+              "type": "array",
+              "items": {
+                "$id": "#/properties/data/properties/attributes/properties/tags/items",
+                "type": "string",
+                "pattern": "^(.+)$"
+              }
+            },
+            "title": {
+              "$id": "#/properties/data/properties/attributes/properties/title",
+              "type": "string",
+              "pattern": "^(.+)$"
+            },
+            "type": {
+              "$id": "#/properties/data/properties/attributes/properties/type",
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

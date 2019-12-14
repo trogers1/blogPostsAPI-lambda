@@ -1,0 +1,18 @@
+app:
+  build: .
+  depends_on:
+    - mongoseed
+  encrypted_env_file: .env_encrypted
+
+app-nodb:
+  build: .
+  encrypted_env_file: .env_encrypted
+
+mongodb:
+  image: mongo:4
+  cached: true
+
+mongoseed:
+  build: ./config/mongoseed
+  depends_on:
+    - mongodb

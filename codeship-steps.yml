@@ -1,0 +1,17 @@
+# - name: API Endpoint Tests
+#   service: app
+#   command: ./node_modules/dredd/bin/dredd --config ./config/dredd-ci.yml
+
+- name: Unit Tests
+  service: app-nodb
+  command: npm run unit
+
+- name: Deploy QA
+  service: app-nodb
+  tag: qa
+  command: npm run deploy:qa
+
+- name: Deploy PROD
+  service: app-nodb
+  tag: master
+  command: npm run deploy:prod
