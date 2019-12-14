@@ -61,7 +61,7 @@ functions:
     handler: handlers/badRequest.main
     events:
       - http:
-          path: /blog/{all+}
+          path: /blog/{id}/{all+}
           method: any
 
 plugins:
