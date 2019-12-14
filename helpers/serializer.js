@@ -3,7 +3,7 @@ const Serializer = new JSONAPISerializer();
 
 const baseOptions = {
   id: 'blogPostId',
-  blacklist: ['__v'],
+  blacklist: ['__v', '_id'],
   jsonapiObject: false
 };
 
