@@ -74,7 +74,8 @@ module.exports.get = async event => {
     return {
       statusCode: 200,
       headers: {
-        'Content-Type': 'application/vnd.api+json; charset=utf-8'
+        'Content-Type': 'application/vnd.api+json; charset=utf-8',
+        'Access-Control-Allow-Origin': '*'
       },
       body: JSON.stringify(serializedResponse)
     };
@@ -168,7 +169,8 @@ module.exports.post = async event => {
       return {
         statusCode: 201,
         headers: {
-          location: `/blog/${blogPostId}`
+          location: `/blog/${blogPostId}`,
+          'Access-Control-Allow-Origin': '*'
         }
       };
     } catch (error) {
@@ -374,7 +376,8 @@ module.exports.patch = async event => {
       statusCode: 200,
       headers: {
         'Content-Type': 'application/vnd.api+json; charset=utf-8',
-        'Updated-Posts': `${connectedBlogPosts.map(post => post.blogPostId).join(',')}`
+        'Updated-Posts': `${connectedBlogPosts.map(post => post.blogPostId).join(',')}`,
+        'Access-Control-Allow-Origin': '*'
       },
       body: JSON.stringify(serializedResponse)
     };
@@ -430,7 +433,8 @@ module.exports.delete = async event => {
     return {
       statusCode: 204,
       headers: {
-        'Content-Type': 'application/vnd.api+json; charset=utf-8'
+        'Content-Type': 'application/vnd.api+json; charset=utf-8',
+        'Access-Control-Allow-Origin': '*'
       }
     };
   } catch (error) {
