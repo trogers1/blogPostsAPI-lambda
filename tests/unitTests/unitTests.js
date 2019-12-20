@@ -242,7 +242,7 @@ describe('utils:', () => {
       it('should contain the correct metadata: previewText', () => {
         assert.strictEqual(
           result.previewText,
-          "This article is a real doozy. I'm going to walk you through creating a RESTful Serverless AWS…"
+          "This article is a real doozy. I'm going to walk you through creating a RESTful Serverless AWS Lambda API running Node. We'll create an example API to handle blog posts, specifically the following  - GET all blog posts - GET specific posts by id - POST to create a new blog post - PATCH to edit a…"
         );
       });
       it('should contain the correct body, including the table of contents', () => {
