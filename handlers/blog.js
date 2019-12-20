@@ -155,7 +155,8 @@ module.exports.post = async event => {
 
       const { title, blogPostId, previewText, body, error } = parseBlogPost(
         eventBody[0],
-        createContents
+        createContents,
+        shouldIgnoreDuplicateH1
       );
 
       if (!title || !blogPostId || !previewText || !body) {

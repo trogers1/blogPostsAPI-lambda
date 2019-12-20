@@ -56,6 +56,9 @@ module.exports.parseBlogPost = (
     while (headers.length) {
       let header = headers.shift();
       let level = header[1].length - 2;
+      if (shouldIgnoreDuplicateH1 && level < 0) {
+        continue;
+      }
       let text = header[2];
       let matchingHeader = headers.findIndex(item => item[2] === text);
       if (matchingHeader !== -1) {
