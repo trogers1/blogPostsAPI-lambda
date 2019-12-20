@@ -43,7 +43,7 @@ module.exports.parseBlogPost = (body, shouldCreateContents = true) => {
     // Remove links and such to get the preview text, then truncate.
     previewText = bodyWithoutHeader.replace(/\]\(.*?\)/g, '');
     previewText = previewText.replace(/[^\w\n -.;!,'"]/g, '');
-    previewText = truncate(previewText, 100);
+    previewText = truncate(previewText, 300);
   }
 
   if (shouldCreateContents) {
