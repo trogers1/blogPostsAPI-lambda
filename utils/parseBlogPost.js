@@ -3,7 +3,11 @@
 const { truncate } = require('../helpers/truncate');
 const { slugify } = require('../helpers/slugify');
 
-module.exports.parseBlogPost = (body, shouldCreateContents = true) => {
+module.exports.parseBlogPost = (
+  body,
+  shouldCreateContents = true,
+  shouldIgnoreDuplicateH1 = false
+) => {
   let title, blogPostId, previewText;
   body = body.split('\r\n').filter(item => item.length);
   body = body[2];
@@ -29,7 +33,7 @@ module.exports.parseBlogPost = (body, shouldCreateContents = true) => {
   }
   if (!h1.length) {
     return { error: 'Found no h1 headers' };
-  } else if (h1.length > 1) {
+  } else if (!shouldIgnoreDuplicateH1 && h1.length > 1) {
     return {
       error: `More than one h1 header found on lines ${h1.map(header => header.lineNum).join(', ')}`
     };
