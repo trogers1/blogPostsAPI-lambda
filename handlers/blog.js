@@ -91,6 +91,7 @@ module.exports.post = async event => {
   let tags,
     type,
     createContents = true,
+    shouldIgnoreDuplicateH1,
     badQueryParams;
   try {
     let contentType;
@@ -105,7 +106,13 @@ module.exports.post = async event => {
       });
     }
     if (event.queryStringParameters) {
-      ({ tags, type, createContents, ...badQueryParams } = event.queryStringParameters);
+      ({
+        tags,
+        type,
+        createContents,
+        shouldIgnoreDuplicateH1,
+        ...badQueryParams
+      } = event.queryStringParameters);
       if (Object.keys(badQueryParams).length) {
         return formatBadRequestError({
           message: `Unrecognized query string parameter(s): ${Object.keys(badQueryParams).join(
@@ -116,6 +123,11 @@ module.exports.post = async event => {
       if (createContents && createContents !== 'false') {
         return formatBadRequestError({
           message: "'createContents', if present, can only be equal to 'false'"
+        });
+      }
+      if (shouldIgnoreDuplicateH1 && shouldIgnoreDuplicateH1 !== 'true') {
+        return formatBadRequestError({
+          message: "'shouldIgnoreDuplicateH1', if present, can only be equal to 'true'"
         });
       }
     }
