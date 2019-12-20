@@ -23,12 +23,12 @@ module.exports.get = async event => {
       ({ id } = event.pathParameters);
     }
 
-    let fullText, badQueryParams;
+    let fullText, type, badQueryParams;
     if (event.queryStringParameters) {
       if (id) {
         ({ fullText, ...badQueryParams } = event.queryStringParameters);
       } else {
-        ({ ...badQueryParams } = event.queryStringParameters);
+        ({ type, ...badQueryParams } = event.queryStringParameters);
       }
       if (Object.keys(badQueryParams).length) {
         return formatBadRequestError({
@@ -37,7 +37,7 @@ module.exports.get = async event => {
           )}`
         });
       }
-      if (fullText !== 'true') {
+      if (fullText && fullText !== 'true') {
         return formatBadRequestError({
           message: `The fullText parameter may only be 'true'. Instead, received: ${fullText}`
         });
@@ -48,6 +48,9 @@ module.exports.get = async event => {
       query = BlogPost.find({ blogPostId: id });
     } else {
       query = BlogPost.find();
+    }
+    if (type) {
+      query.where({ type });
     }
     if (fullText) {
       query.select('+body');
@@ -74,7 +77,8 @@ module.exports.get = async event => {
     return {
       statusCode: 200,
       headers: {
-        'Content-Type': 'application/vnd.api+json; charset=utf-8'
+        'Content-Type': 'application/vnd.api+json; charset=utf-8',
+        'Access-Control-Allow-Origin': '*'
       },
       body: JSON.stringify(serializedResponse)
     };
@@ -168,7 +172,8 @@ module.exports.post = async event => {
       return {
         statusCode: 201,
         headers: {
-          location: `/blog/${blogPostId}`
+          location: `/blog/${blogPostId}`,
+          'Access-Control-Allow-Origin': '*'
         }
       };
     } catch (error) {
@@ -374,7 +379,8 @@ module.exports.patch = async event => {
       statusCode: 200,
       headers: {
         'Content-Type': 'application/vnd.api+json; charset=utf-8',
-        'Updated-Posts': `${connectedBlogPosts.map(post => post.blogPostId).join(',')}`
+        'Updated-Posts': `${connectedBlogPosts.map(post => post.blogPostId).join(',')}`,
+        'Access-Control-Allow-Origin': '*'
       },
       body: JSON.stringify(serializedResponse)
     };
@@ -430,7 +436,8 @@ module.exports.delete = async event => {
     return {
       statusCode: 204,
       headers: {
-        'Content-Type': 'application/vnd.api+json; charset=utf-8'
+        'Content-Type': 'application/vnd.api+json; charset=utf-8',
+        'Access-Control-Allow-Origin': '*'
       }
     };
   } catch (error) {

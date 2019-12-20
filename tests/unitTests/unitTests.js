@@ -242,16 +242,16 @@ describe('utils:', () => {
       it('should contain the correct metadata: previewText', () => {
         assert.strictEqual(
           result.previewText,
-          "This article is a real doozy. I'm going to walk you through creating a RESTful Serverless AWS…"
+          "This article is a real doozy. I'm going to walk you through creating a RESTful Serverless AWS Lambda API running Node. We'll create an example API to handle blog posts, specifically the following  - GET all blog posts - GET specific posts by id - POST to create a new blog post - PATCH to edit a…"
         );
       });
       it('should contain the correct body, including the table of contents', () => {
         let correctTableOfContents =
-          '## Contents\n- [`npm init`](##npm-init)\n- [Get Workspace ready](##get-workspace-ready)\n  - [Install Dependencies](###install-dependencies)\n  - [Create Dot Files](###create-dot-files)\n\n----\n\n';
+          '## Contents\n- [`npm init`](#npm-init)\n- [Get Workspace ready](#get-workspace-ready)\n  - [Install Dependencies](#install-dependencies)\n  - [Create Dot Files](#create-dot-files)\n\n----\n\n';
         assert.strictEqual(result.body, correctTableOfContents + expectedResultBody);
       });
     });
-    describe('-> Provided An MD with duplicate headers', () => {
+    describe('-> Provided An MD with duplicate headers of the same level', () => {
       let exampleBody =
         '\r\n' +
         'Content-Disposition: form-data; name=""; filename="Steps.md"\r\n' +
@@ -272,6 +272,39 @@ describe('utils:', () => {
         '## `npm init`\n' +
         '\n' +
         '## `npm init`\n' +
+        '\n' +
+        'Using `npm init`, answer the questions. After generating the `package.json`, edit it by removing the `"main"` line, since we won\'t have a main entrance to our API.\n' +
+        '\n' +
+        '## Get Workspace ready\n' +
+        '\n' +
+        '### Install Dependencies\n' +
+        '\n';
+      let result = parseBlogPost(exampleBody);
+      it('should correctly return an error when encountering duplicate headers', () => {
+        assert.strictEqual(result.error, 'Found two matching headers. Lines: 12 and 14');
+      });
+    });
+    describe('-> Provided An MD with duplicate headers of different levels', () => {
+      let exampleBody =
+        '\r\n' +
+        'Content-Disposition: form-data; name=""; filename="Steps.md"\r\n' +
+        'Content-Type: text/markdown\r\n' +
+        '\r\n' +
+        '# Creating a Serverless API with Mongo, Docker, and Codeship\n' +
+        '\n' +
+        "This article is a real doozy. I'm going to walk you through creating a RESTful Serverless AWS Lambda API running Node. We'll create an example API to handle blog posts, specifically the following:\n" +
+        '\n' +
+        '- `GET` all blog posts\n' +
+        '- `GET` specific posts by id\n' +
+        '- `POST` to create a new blog post\n' +
+        '- `PATCH` to edit a blog post\n' +
+        '- `DELETE` to delete a blog post\n' +
+        '\n' +
+        "Create a repo using your version control software and let's get started.\n" +
+        '\n' +
+        '## `npm init`\n' +
+        '\n' +
+        '### `npm init`\n' +
         '\n' +
         'Using `npm init`, answer the questions. After generating the `package.json`, edit it by removing the `"main"` line, since we won\'t have a main entrance to our API.\n' +
         '\n' +
@@ -340,7 +373,6 @@ describe('utils:', () => {
         '\n' +
         '# Install Dependencies\n' +
         '\n';
-      console.log('start here');
       let result = parseBlogPost(exampleBody);
       it('should correctly return an error', () => {
         assert.strictEqual(result.error, 'More than one h1 header found on lines 0, 18');
