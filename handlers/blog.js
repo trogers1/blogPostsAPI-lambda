@@ -23,12 +23,12 @@ module.exports.get = async event => {
       ({ id } = event.pathParameters);
     }
 
-    let fullText, badQueryParams;
+    let fullText, type, badQueryParams;
     if (event.queryStringParameters) {
       if (id) {
         ({ fullText, ...badQueryParams } = event.queryStringParameters);
       } else {
-        ({ ...badQueryParams } = event.queryStringParameters);
+        ({ type, ...badQueryParams } = event.queryStringParameters);
       }
       if (Object.keys(badQueryParams).length) {
         return formatBadRequestError({
@@ -37,7 +37,7 @@ module.exports.get = async event => {
           )}`
         });
       }
-      if (fullText !== 'true') {
+      if (fullText && fullText !== 'true') {
         return formatBadRequestError({
           message: `The fullText parameter may only be 'true'. Instead, received: ${fullText}`
         });
@@ -48,6 +48,9 @@ module.exports.get = async event => {
       query = BlogPost.find({ blogPostId: id });
     } else {
       query = BlogPost.find();
+    }
+    if (type) {
+      query.where({ type });
     }
     if (fullText) {
       query.select('+body');
