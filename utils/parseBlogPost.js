@@ -3,11 +3,7 @@
 const { truncate } = require('../helpers/truncate');
 const { slugify } = require('../helpers/slugify');
 
-module.exports.parseBlogPost = (
-  body,
-  shouldCreateContents = true,
-  shouldIgnoreDuplicateH1 = false
-) => {
+module.exports.parseBlogPost = (body, shouldCreateContents = true) => {
   let title, blogPostId, previewText;
   body = body.split('\r\n').filter(item => item.length);
   body = body[2];
@@ -19,8 +15,19 @@ module.exports.parseBlogPost = (
     headers = [],
     line,
     bodyWithoutHeader;
+
+  // Find all headers
   for (let i = 0; i < parseBody.length; i++) {
     line = parseBody[i];
+    // Skip code blocks
+    if (line.match(/^```/)) {
+      do {
+        i++;
+        line = parseBody[i];
+      } while (!line.match(/^```/));
+      continue;
+    }
+    // Find Headers
     let match = line.match(/^# (.+)/);
     if (match) {
       h1.push({ match, lineNum: i });
@@ -33,20 +40,20 @@ module.exports.parseBlogPost = (
   }
   if (!h1.length) {
     return { error: 'Found no h1 headers' };
-  } else if (!shouldIgnoreDuplicateH1 && h1.length > 1) {
+  } else if (h1.length > 1) {
     return {
       error: `More than one h1 header found on lines ${h1.map(header => header.lineNum).join(', ')}`
     };
   } else {
     title = h1[0].match.input.replace('# ', '');
     blogPostId = slugify(title);
-    blogPostId = blogPostId.replace(/[^\w-]/g, '');
+    blogPostId = blogPostId.replace(/[^\w\-]/g, '');
     blogPostId = blogPostId.toLowerCase();
     bodyWithoutHeader = body.slice(h1[0].match.input.length);
 
     // Remove links and such to get the preview text, then truncate.
     previewText = bodyWithoutHeader.replace(/\]\(.*?\)/g, '');
-    previewText = previewText.replace(/[^\w\n -.;!,'"]/g, '');
+    previewText = previewText.replace(/[^\w\n \-.;!,'"\(\)]/g, '');
     previewText = truncate(previewText, 300);
   }
 
@@ -56,9 +63,6 @@ module.exports.parseBlogPost = (
     while (headers.length) {
       let header = headers.shift();
       let level = header[1].length - 2;
-      if (shouldIgnoreDuplicateH1 && level < 0) {
-        continue;
-      }
       let text = header[2];
       let matchingHeader = headers.findIndex(item => item[2] === text);
       if (matchingHeader !== -1) {
