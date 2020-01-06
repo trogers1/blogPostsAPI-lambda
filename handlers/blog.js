@@ -424,7 +424,7 @@ module.exports.delete = async event => {
         });
       }
 
-      const deletedCourse = await BlogPost.findOneAndDelete(blogPostId);
+      const deletedCourse = await BlogPost.findOneAndDelete({ blogPostId });
       if (!deletedCourse) {
         const message = 'The BlogPost you are trying to delete was not found. Please verify the id';
         throw formatNotFoundError({ message });
