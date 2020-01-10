@@ -25,6 +25,7 @@ function connectToDatabase() {
   console.log(`=> Connection URL: ${url}`);
 
   return mongoose.connect(url).catch(error => {
+    console.error('Connection error', error);
     throw formatDatabaseError({ message: error.name });
   });
 }
