@@ -9,7 +9,7 @@ module.exports.formatInternalError = error => {
   if (error.statusCode && error.headers && error.body && JSON.parse(error.body).errors) {
     return error;
   }
-  console.error(error);
+  console.error(`An internal server error occurred: ${error.message}.`);
   return {
     statusCode: 500,
     headers: {
@@ -20,7 +20,7 @@ module.exports.formatInternalError = error => {
         {
           status: 500,
           title: 'Internal Server Error',
-          detail: `An internal server error occured: ${error.message}.`
+          detail: `An internal server error occurred: ${error.message}.`
         }
       ]
     })

@@ -9,7 +9,7 @@ module.exports.formatDatabaseError = error => {
   if (error.statusCode && error.headers && error.body && JSON.parse(error.body).errors) {
     return error;
   }
-  console.error(error);
+  console.error(`A database error occurred: ${error.message}.`);
   return {
     statusCode: 500,
     headers: {
@@ -20,7 +20,7 @@ module.exports.formatDatabaseError = error => {
         {
           status: 500,
           title: 'Database Error',
-          detail: `A database error occured: ${error.message}.`
+          detail: `A database error occurred: ${error.message}.`
         }
       ]
     })
