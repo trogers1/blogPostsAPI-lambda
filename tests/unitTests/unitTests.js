@@ -25,7 +25,7 @@ describe('utils:', () => {
               {
                 status: 500,
                 title: 'Database Error',
-                detail: `A database error occured: ${error.message}.`
+                detail: `A database error occurred: ${error.message}.`
               }
             ]
           })
@@ -58,7 +58,7 @@ describe('utils:', () => {
               {
                 status: 500,
                 title: 'Internal Server Error',
-                detail: `An internal server error occured: ${error.message}.`
+                detail: `An internal server error occurred: ${error.message}.`
               }
             ]
           })
