@@ -233,8 +233,6 @@ module.exports.patch = async event => {
           "Content-Type header must be present, and must be equal to 'application/json' or 'multipart/form-data'"
       });
     }
-    console.log('content type', contentType);
-    console.log(event);
     if (event.queryStringParameters) {
       ({ tags, type, createContents, ...badQueryParams } = event.queryStringParameters);
       if (Object.keys(badQueryParams).length) {
@@ -283,13 +281,11 @@ module.exports.patch = async event => {
     if (contentType === 'application/json') {
       let parsedBody = parseBody(event.body);
       let valid = ajv.validate(blogPostPatchSchema, parsedBody);
-      console.log('valid', valid);
       if (!valid) {
         console.log('errors', ajv.errors);
         return formatValidationError(ajv.errors);
       }
       const deserializedBlogPost = await Serializer.deserialize('blogPost', parsedBody);
-      console.log('deserialized', deserializedBlogPost);
       ({ title, blogPostId, previewText, tags, type } = deserializedBlogPost);
     } else {
       let boundaryString, eventBody;
@@ -336,8 +332,6 @@ module.exports.patch = async event => {
     if (type) {
       updatedFields.type = type;
     }
-    console.log('blogPostId', blogPostId);
-    console.log('id', id);
 
     // If blogPostId is being updated, find BlogPosts that contain a link to blogPostId, and update the link
     let connectedBlogPosts;
