@@ -20,17 +20,10 @@ package:
     - responseSchemas/**
     - tests/**
     - utils/**
-    - static/**
   exclude:
     - ./**
 
 functions:
-  docs:
-    handler: handlers/docs.get
-    events:
-      - http:
-          path: /blog/docs
-          method: get
   getblogPosts:
     handler: handlers/blog.get
     events:

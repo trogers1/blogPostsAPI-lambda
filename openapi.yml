@@ -1,3 +1,4 @@
+# This FILE DOES NOT REPRESENT THE API. I am toying with OPENAPI as a way to define future APIs
 openapi: '3.0.2'
 info:
   version: 1.0.0
