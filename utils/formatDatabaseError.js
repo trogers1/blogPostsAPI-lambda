@@ -10,6 +10,7 @@ module.exports.formatDatabaseError = error => {
     return error;
   }
   console.error(`A database error occurred: ${error.message}.`);
+  console.error(error);
   return {
     statusCode: 500,
     headers: {

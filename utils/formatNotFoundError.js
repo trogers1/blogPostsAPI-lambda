@@ -10,6 +10,7 @@ module.exports.formatNotFoundError = error => {
     return error;
   }
   console.error(`Unable to find the resource: ${error.message}.`);
+  console.error(error);
   return {
     statusCode: 404,
     headers: {

@@ -300,10 +300,7 @@ module.exports.patch = async event => {
         });
       }
 
-      ({ title, blogPostId, previewText, body, error } = parseBlogPost(
-        eventBody[0],
-        createContents
-      ));
+      ({ title, previewText, body, error } = parseBlogPost(eventBody[0], createContents));
 
       if (error) {
         return formatInternalError({
@@ -373,7 +370,9 @@ module.exports.patch = async event => {
       statusCode: 200,
       headers: {
         'Content-Type': 'application/vnd.api+json; charset=utf-8',
-        'Updated-Posts': `${connectedBlogPosts.map(post => post.blogPostId).join(',')}`,
+        'Updated-Posts': `${
+          connectedBlogPosts ? connectedBlogPosts.map(post => post.blogPostId).join(',') : 'none'
+        }`,
         'Access-Control-Allow-Origin': '*'
       },
       body: JSON.stringify(serializedResponse)
