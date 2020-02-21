@@ -215,6 +215,7 @@ module.exports.patch = async event => {
    *  - not all updated
    *  - no links
    *  - Check that all updated ones are in the header
+   * - test that you can update link with JSON, but NOT with markdown
    */
   let tags,
     type,
