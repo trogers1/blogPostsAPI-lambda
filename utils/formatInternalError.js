@@ -10,6 +10,7 @@ module.exports.formatInternalError = error => {
     return error;
   }
   console.error(`An internal server error occurred: ${error.message}.`);
+  console.error(error);
   return {
     statusCode: 500,
     headers: {
