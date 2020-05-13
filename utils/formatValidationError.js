@@ -19,7 +19,9 @@ module.exports.formatValidationError = error => {
       errors: error.map(err => {
         let detail = `${err.dataPath.replace(/\./g, '->')} ${err.message}.`;
         if (err.keyword === 'additionalProperties') {
-          detail = `'${err.params.additionalProperty}' is an invalid attribute.`;
+          detail = `${err.dataPath.replace(/\./g, '->')}->${
+            err.params.additionalProperty
+          } is an invalid attribute.`;
         }
         return {
           status: 400,
