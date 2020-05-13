@@ -49,15 +49,14 @@ module.exports.parseBlogPost = (body, shouldCreateContents = true) => {
     blogPostId = slugify(title);
     blogPostId = blogPostId.replace(/[^\w\-]/g, '');
     blogPostId = blogPostId.toLowerCase();
-    bodyWithoutHeader = body.slice(h1[0].match.input.length);
+    bodyWithoutHeader = body.slice(h1[0].match.input.length + 2);
 
     // Remove links and such to get the preview text, then truncate.
     previewText = bodyWithoutHeader.replace(/\]\(.*?\)/g, '');
     previewText = previewText.replace(/[^\w\n \-.;!,'"\(\)]/g, '');
     previewText = truncate(previewText, 300);
   }
-
-  if (shouldCreateContents) {
+  if (shouldCreateContents === true) {
     contents = '## Contents\n';
     headers.shift(); // remove h1
     while (headers.length) {

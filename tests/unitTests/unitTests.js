@@ -1,16 +1,103 @@
 const assert = require('assert');
+const Ajv = require('ajv');
+const ajv = new Ajv({ allErrors: true });
 
 const {
   formatDatabaseError,
   formatInternalError,
   formatNotFoundError,
   formatBadRequestError,
+  formatValidationError,
   parseBlogPost
 } = require('../../utils');
 const { slugify } = require('../../helpers/slugify');
 const { truncate } = require('../../helpers/truncate');
+const blogPostPatchSchema = require('../../requestSchemas/blogPostPatchSchema.json');
 
 describe('utils:', () => {
+  describe('- formatValidationError()', () => {
+    describe('-> Provided Unformatted Error', () => {
+      it('Should return a properly-formatted error response when passed an array of schema validation errors', () => {
+        const exampleBody = {
+          additionalProperty: 'true',
+          data: {
+            type: 'not a valid blog pst',
+            additionalProperty: true,
+            attributes: {
+              title: 'a blog post title',
+              previewText: 'a preview text',
+              tags: ['tag1', 1],
+              additionalProperty: true,
+              type: 3
+            }
+          }
+        };
+        let valid = ajv.validate(blogPostPatchSchema, exampleBody);
+        const expectedResponse = {
+          statusCode: 400,
+          headers: {
+            'Content-Type': 'application/vnd.api+json; charset=utf-8'
+          },
+          body: JSON.stringify({
+            errors: [
+              {
+                status: 400,
+                title: 'Bad Request',
+                detail: '->additionalProperty is an invalid attribute.'
+              },
+              {
+                status: 400,
+                title: 'Bad Request',
+                detail: '->data->additionalProperty is an invalid attribute.'
+              },
+              {
+                status: 400,
+                title: 'Bad Request',
+                detail: '->data->type should match pattern "^blogPost$".'
+              },
+              {
+                status: 400,
+                title: 'Bad Request',
+                detail: "->data should have required property 'id'."
+              },
+              {
+                status: 400,
+                title: 'Bad Request',
+                detail: '->data->attributes->additionalProperty is an invalid attribute.'
+              },
+              {
+                status: 400,
+                title: 'Bad Request',
+                detail: '->data->attributes->tags[1] should be string.'
+              },
+              {
+                status: 400,
+                title: 'Bad Request',
+                detail: '->data->attributes->type should be string.'
+              }
+            ]
+          })
+        };
+        assert(!valid, 'Schema should be invalid, but was found to be valid.');
+        assert.deepStrictEqual(
+          // Do this so it's easier to see exactly where the difference is.
+          JSON.parse(formatValidationError(ajv.errors).body),
+          JSON.parse(expectedResponse.body)
+        );
+        assert.deepStrictEqual(formatValidationError(ajv.errors), expectedResponse);
+      });
+    });
+    describe('-> Provided Formatted Error', () => {
+      it('Should return the formatted error response untouched when passed an already-formatted error', () => {
+        const error = { message: 'This is an internal error message' };
+        assert.deepStrictEqual(
+          formatValidationError(formatInternalError(error)),
+          formatInternalError(error)
+        );
+      });
+    });
+  });
+
   describe('- formatDatabaseError()', () => {
     describe('-> Provided Unformatted Error', () => {
       it('should return a properly-formatted error response when passed an error', () => {
@@ -189,7 +276,6 @@ describe('utils:', () => {
         'Now, we need the dot files to get our workspace working correctly. Create the following files (examples can be found in the `examples/dotFiles`[LINK_NEEDED] directory).\n' +
         '\n';
       let expectedResultBody =
-        '\n' +
         "This article is a real doozy. I'm going to walk you through creating a RESTful Serverless AWS Lambda API running Node. We'll create an example API to handle blog posts, specifically the following:\n" +
         '\n' +
         '- `GET` all blog posts\n' +
@@ -247,8 +333,112 @@ describe('utils:', () => {
       });
       it('should contain the correct body, including the table of contents', () => {
         let correctTableOfContents =
-          '## Contents\n- [`npm init`](#npm-init)\n- [Get Workspace ready](#get-workspace-ready)\n  - [Install Dependencies](#install-dependencies)\n  - [Create Dot Files](#create-dot-files)\n\n----\n\n';
+          '## Contents\n- [`npm init`](#npm-init)\n- [Get Workspace ready](#get-workspace-ready)\n  - [Install Dependencies](#install-dependencies)\n  - [Create Dot Files](#create-dot-files)\n\n----\n';
         assert.strictEqual(result.body, correctTableOfContents + expectedResultBody);
+      });
+    });
+    describe('-> Provided An Average MD, it should return the appropriate metadata when asked NOT to prepend a Table of Contents', () => {
+      let exampleBody =
+        '\r\n' +
+        'Content-Disposition: form-data; name=""; filename="Steps.md"\r\n' +
+        'Content-Type: text/markdown\r\n' +
+        '\r\n' +
+        '# Creating a Serverless API with Mongo, Docker, and Codeship\n' +
+        '\n' +
+        "This article is a real doozy. I'm going to walk you through creating a RESTful Serverless AWS Lambda API running Node. We'll create an example API to handle blog posts, specifically the following:\n" +
+        '\n' +
+        '- `GET` all blog posts\n' +
+        '- `GET` specific posts by id\n' +
+        '- `POST` to create a new blog post\n' +
+        '- `PATCH` to edit a blog post\n' +
+        '- `DELETE` to delete a blog post\n' +
+        '\n' +
+        "Create a repo using your version control software and let's get started.\n" +
+        '\n' +
+        '## `npm init`\n' +
+        '\n' +
+        'Using `npm init`, answer the questions. After generating the `package.json`, edit it by removing the `"main"` line, since we won\'t have a main entrance to our API.\n' +
+        '\n' +
+        '## Get Workspace ready\n' +
+        '\n' +
+        '### Install Dependencies\n' +
+        '\n' +
+        "Firstly, we'll install all dependencies. Both devDependencies and full dependencies.\n" +
+        '\n' +
+        '**devDependencies**\n' +
+        '\n' +
+        '```\n' +
+        '$ npm i dredd eslint hooks mocha nodemon prettier serverless serverless-offline --save-dev\n' +
+        '```\n' +
+        '\n' +
+        '**dependencies**\n' +
+        '\n' +
+        '```\n' +
+        '$ npm i json-api-serializer ajv mongoose papaparse query-string\n' +
+        '```\n' +
+        '\n' +
+        '### Create Dot Files\n' +
+        '\n' +
+        'Now, we need the dot files to get our workspace working correctly. Create the following files (examples can be found in the `examples/dotFiles`[LINK_NEEDED] directory).\n' +
+        '\n';
+      let expectedResultBody =
+        "This article is a real doozy. I'm going to walk you through creating a RESTful Serverless AWS Lambda API running Node. We'll create an example API to handle blog posts, specifically the following:\n" +
+        '\n' +
+        '- `GET` all blog posts\n' +
+        '- `GET` specific posts by id\n' +
+        '- `POST` to create a new blog post\n' +
+        '- `PATCH` to edit a blog post\n' +
+        '- `DELETE` to delete a blog post\n' +
+        '\n' +
+        "Create a repo using your version control software and let's get started.\n" +
+        '\n' +
+        '## `npm init`\n' +
+        '\n' +
+        'Using `npm init`, answer the questions. After generating the `package.json`, edit it by removing the `"main"` line, since we won\'t have a main entrance to our API.\n' +
+        '\n' +
+        '## Get Workspace ready\n' +
+        '\n' +
+        '### Install Dependencies\n' +
+        '\n' +
+        "Firstly, we'll install all dependencies. Both devDependencies and full dependencies.\n" +
+        '\n' +
+        '**devDependencies**\n' +
+        '\n' +
+        '```\n' +
+        '$ npm i dredd eslint hooks mocha nodemon prettier serverless serverless-offline --save-dev\n' +
+        '```\n' +
+        '\n' +
+        '**dependencies**\n' +
+        '\n' +
+        '```\n' +
+        '$ npm i json-api-serializer ajv mongoose papaparse query-string\n' +
+        '```\n' +
+        '\n' +
+        '### Create Dot Files\n' +
+        '\n' +
+        'Now, we need the dot files to get our workspace working correctly. Create the following files (examples can be found in the `examples/dotFiles`[LINK_NEEDED] directory).\n' +
+        '\n';
+      let result = parseBlogPost(exampleBody, false);
+      it('should contain the correct metadata: Title', () => {
+        assert.strictEqual(
+          result.title,
+          'Creating a Serverless API with Mongo, Docker, and Codeship'
+        );
+      });
+      it('should contain the correct metadata: blogPostId', () => {
+        assert.strictEqual(
+          result.blogPostId,
+          'creating-a-serverless-api-with-mongo-docker-and-codeship'
+        );
+      });
+      it('should contain the correct metadata: previewText', () => {
+        assert.strictEqual(
+          result.previewText,
+          "This article is a real doozy. I'm going to walk you through creating a RESTful Serverless AWS Lambda API running Node. We'll create an example API to handle blog posts, specifically the following  - GET all blog posts - GET specific posts by id - POST to create a new blog post - PATCH to edit a…"
+        );
+      });
+      it('should contain the correct body, with NO table of contents', () => {
+        assert.strictEqual(result.body, expectedResultBody);
       });
     });
     describe('-> Provided An MD with duplicate headers of the same level', () => {
@@ -405,8 +595,6 @@ describe('utils:', () => {
         '### Install Dependencies\n' +
         '\n';
       let expectedResultBody =
-        '\n' +
-        '\n' +
         "This article is a real doozy. I'm going to walk you through creating a RESTful Serverless AWS Lambda API running Node. We'll create an example API to handle blog posts, specifically the following:\n" +
         '\n' +
         '- `GET` all blog posts\n' +
