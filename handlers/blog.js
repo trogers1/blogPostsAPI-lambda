@@ -251,10 +251,13 @@ module.exports.patch = async event => {
           message: "Query string params are only valid for the 'multipart/form-data' Content-Type"
         });
       }
-      if (shouldCreateContents && shouldCreateContents !== 'false') {
-        return formatBadRequestError({
-          message: "'shouldCreateContents', if present, can only be equal to 'false'"
-        });
+      if (shouldCreateContents) {
+        if (shouldCreateContents !== 'false') {
+          return formatBadRequestError({
+            message: "'shouldCreateContents', if present, can only be equal to 'false'"
+          });
+        }
+        shouldCreateContents = false;
       }
     }
     if (tags) {

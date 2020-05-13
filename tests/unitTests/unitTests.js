@@ -276,7 +276,6 @@ describe('utils:', () => {
         'Now, we need the dot files to get our workspace working correctly. Create the following files (examples can be found in the `examples/dotFiles`[LINK_NEEDED] directory).\n' +
         '\n';
       let expectedResultBody =
-        '\n' +
         "This article is a real doozy. I'm going to walk you through creating a RESTful Serverless AWS Lambda API running Node. We'll create an example API to handle blog posts, specifically the following:\n" +
         '\n' +
         '- `GET` all blog posts\n' +
@@ -334,7 +333,7 @@ describe('utils:', () => {
       });
       it('should contain the correct body, including the table of contents', () => {
         let correctTableOfContents =
-          '## Contents\n- [`npm init`](#npm-init)\n- [Get Workspace ready](#get-workspace-ready)\n  - [Install Dependencies](#install-dependencies)\n  - [Create Dot Files](#create-dot-files)\n\n----\n\n';
+          '## Contents\n- [`npm init`](#npm-init)\n- [Get Workspace ready](#get-workspace-ready)\n  - [Install Dependencies](#install-dependencies)\n  - [Create Dot Files](#create-dot-files)\n\n----\n';
         assert.strictEqual(result.body, correctTableOfContents + expectedResultBody);
       });
     });
@@ -383,8 +382,6 @@ describe('utils:', () => {
         'Now, we need the dot files to get our workspace working correctly. Create the following files (examples can be found in the `examples/dotFiles`[LINK_NEEDED] directory).\n' +
         '\n';
       let expectedResultBody =
-        '\n' +
-        '\n' +
         "This article is a real doozy. I'm going to walk you through creating a RESTful Serverless AWS Lambda API running Node. We'll create an example API to handle blog posts, specifically the following:\n" +
         '\n' +
         '- `GET` all blog posts\n' +
@@ -598,8 +595,6 @@ describe('utils:', () => {
         '### Install Dependencies\n' +
         '\n';
       let expectedResultBody =
-        '\n' +
-        '\n' +
         "This article is a real doozy. I'm going to walk you through creating a RESTful Serverless AWS Lambda API running Node. We'll create an example API to handle blog posts, specifically the following:\n" +
         '\n' +
         '- `GET` all blog posts\n' +
