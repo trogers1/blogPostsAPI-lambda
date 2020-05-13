@@ -90,7 +90,7 @@ module.exports.get = async event => {
 module.exports.post = async event => {
   let tags,
     type,
-    createContents = true,
+    shouldCreateContents = true,
     badQueryParams;
   try {
     let contentType;
@@ -105,7 +105,7 @@ module.exports.post = async event => {
       });
     }
     if (event.queryStringParameters) {
-      ({ tags, type, createContents, ...badQueryParams } = event.queryStringParameters);
+      ({ tags, type, shouldCreateContents, ...badQueryParams } = event.queryStringParameters);
       if (Object.keys(badQueryParams).length) {
         return formatBadRequestError({
           message: `Unrecognized query string parameter(s): ${Object.keys(badQueryParams).join(
@@ -113,10 +113,13 @@ module.exports.post = async event => {
           )}`
         });
       }
-      if (createContents && createContents !== 'false') {
-        return formatBadRequestError({
-          message: "'createContents', if present, can only be equal to 'false'"
-        });
+      if (shouldCreateContents) {
+        if (shouldCreateContents !== 'false') {
+          return formatBadRequestError({
+            message: "'shouldCreateContents', if present, can only be equal to 'false'"
+          });
+        }
+        shouldCreateContents = false;
       }
     }
     if (tags) {
@@ -143,7 +146,7 @@ module.exports.post = async event => {
 
       const { title, blogPostId, previewText, body, error } = parseBlogPost(
         eventBody[0],
-        createContents
+        shouldCreateContents
       );
 
       if (!title || !blogPostId || !previewText || !body) {
@@ -198,8 +201,8 @@ module.exports.patch = async event => {
    *  - json
    *  - md
    * - test bad query string param handling
-   * - test createContents works as expected
-   * - test bad createContents value
+   * - test shouldCreateContents works as expected
+   * - test bad shouldCreateContents value
    * - test tags with weird formatting
    * - test not-existing id
    * - test no body (both content types)
@@ -219,7 +222,7 @@ module.exports.patch = async event => {
    */
   let tags,
     type,
-    createContents = true,
+    shouldCreateContents = true,
     badQueryParams;
   try {
     let { id } = event.pathParameters;
@@ -235,7 +238,7 @@ module.exports.patch = async event => {
       });
     }
     if (event.queryStringParameters) {
-      ({ tags, type, createContents, ...badQueryParams } = event.queryStringParameters);
+      ({ tags, type, shouldCreateContents, ...badQueryParams } = event.queryStringParameters);
       if (Object.keys(badQueryParams).length) {
         return formatBadRequestError({
           message: `Unrecognized query string parameter(s): ${Object.keys(badQueryParams).join(
@@ -243,14 +246,14 @@ module.exports.patch = async event => {
           )}`
         });
       }
-      if ((tags || type || createContents) && contentType === 'application/json') {
+      if ((tags || type || shouldCreateContents) && contentType === 'application/json') {
         return formatBadRequestError({
           message: "Query string params are only valid for the 'multipart/form-data' Content-Type"
         });
       }
-      if (createContents && createContents !== 'false') {
+      if (shouldCreateContents && shouldCreateContents !== 'false') {
         return formatBadRequestError({
-          message: "'createContents', if present, can only be equal to 'false'"
+          message: "'shouldCreateContents', if present, can only be equal to 'false'"
         });
       }
     }
@@ -301,7 +304,7 @@ module.exports.patch = async event => {
         });
       }
 
-      ({ title, previewText, body, error } = parseBlogPost(eventBody[0], createContents));
+      ({ title, previewText, body, error } = parseBlogPost(eventBody[0], shouldCreateContents));
 
       if (error) {
         return formatInternalError({
