@@ -31,6 +31,6 @@
     "ajv": "^6.10.2",
     "json-api-serializer": "^2.2.2",
     "mongoose": "^5.7.12",
-    "papaparse": "^5.1.0"
+    "papaparse": "^5.3.0"
   }
 }
