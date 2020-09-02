@@ -72,7 +72,7 @@ module.exports.parseBlogPost = (body, shouldCreateContents = true) => {
       contents += `${'  '.repeat(level)}`;
       contents += `- [${text}](#${slugify(text)})\n`;
     }
-    contents += '\n----\n';
+    contents += '\n----\n\n';
     body = contents + bodyWithoutHeader;
   } else {
     body = bodyWithoutHeader;

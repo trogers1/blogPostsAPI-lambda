@@ -333,7 +333,7 @@ describe('utils:', () => {
       });
       it('should contain the correct body, including the table of contents', () => {
         let correctTableOfContents =
-          '## Contents\n- [`npm init`](#npm-init)\n- [Get Workspace ready](#get-workspace-ready)\n  - [Install Dependencies](#install-dependencies)\n  - [Create Dot Files](#create-dot-files)\n\n----\n';
+          '## Contents\n- [`npm init`](#npm-init)\n- [Get Workspace ready](#get-workspace-ready)\n  - [Install Dependencies](#install-dependencies)\n  - [Create Dot Files](#create-dot-files)\n\n----\n\n';
         assert.strictEqual(result.body, correctTableOfContents + expectedResultBody);
       });
     });
